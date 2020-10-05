@@ -5,7 +5,7 @@ import unittest
 
 from selenium import webdriver
 
-from FrontEndAutomationChallenge.Resources.TestData import TestData
+from Resources.TestData import TestData
 
 
 class BaseTest(unittest.TestCase):

@@ -1,11 +1,11 @@
-from FrontEndAutomationChallenge.PageObjects.OverviewPage import OverviewPage
-from FrontEndAutomationChallenge.PageObjects.ShoppingCartPage import ShoppingCartPage
-from FrontEndAutomationChallenge.PageObjects.CheckoutPage import CheckoutPage
-from FrontEndAutomationChallenge.Tests.BaseTest import BaseTest
-from FrontEndAutomationChallenge.PageObjects.LoginPage import LoginPage
-from FrontEndAutomationChallenge.PageObjects.ProductsPage import ProductsPage
-from FrontEndAutomationChallenge.Resources.TestData import TestData
-from FrontEndAutomationChallenge.Resources.Locators import Locators
+from PageObjects.OverviewPage import OverviewPage
+from PageObjects.ShoppingCartPage import ShoppingCartPage
+from PageObjects.CheckoutPage import CheckoutPage
+from Tests.BaseTest import BaseTest
+from PageObjects.LoginPage import LoginPage
+from PageObjects.ProductsPage import ProductsPage
+from Resources.TestData import TestData
+from Resources.Locators import Locators
 
 
 class Tests(BaseTest):

@@ -2,6 +2,7 @@
 Class that includes test data constants
 """
 
+
 class TestData:
     CHROME_EXECUTABLE_PATH = 'C:\\Users\\agnavarr\\OneDrive - Intel Corporation\\Documents\\NSG\\Repos\\practice\\' \
                              'FrontEndAutomationChallenge\\Drivers\\chromedriver.exe '

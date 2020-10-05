@@ -2,8 +2,8 @@
 Class for the actions that can be done in the Overview page. These include getting the actual webpage and clicking
 on the finish order button
 """
-from FrontEndAutomationChallenge.PageObjects.BasePage import BasePage
-from FrontEndAutomationChallenge.Resources.Locators import Locators
+from PageObjects.BasePage import BasePage
+from Resources.Locators import Locators
 
 
 class OverviewPage(BasePage):

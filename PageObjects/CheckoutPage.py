@@ -2,9 +2,9 @@
 Class for the actions that can be done in the checkout page. These include getting the actual webpage and filling out
 the users information needed for checkout
 """
-from FrontEndAutomationChallenge.PageObjects.BasePage import BasePage
-from FrontEndAutomationChallenge.Resources.Locators import Locators
-from FrontEndAutomationChallenge.Resources.TestData import TestData
+from PageObjects.BasePage import BasePage
+from Resources.Locators import Locators
+from Resources.TestData import TestData
 
 
 class CheckoutPage(BasePage):

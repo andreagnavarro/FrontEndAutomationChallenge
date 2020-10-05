@@ -2,8 +2,8 @@
 Class for the actions that can be done in the Products page. These include getting the actual webpage and executing the
 logout sequence as well as handling the items
 """
-from FrontEndAutomationChallenge.PageObjects.BasePage import BasePage
-from FrontEndAutomationChallenge.Resources.Locators import Locators
+from PageObjects.BasePage import BasePage
+from Resources.Locators import Locators
 
 
 class ProductsPage(BasePage):

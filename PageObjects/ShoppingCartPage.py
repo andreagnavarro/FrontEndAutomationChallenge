@@ -2,8 +2,8 @@
 Class for the actions that can be done in the Shopping Cart page. These include getting the actual webpage and clicking
 on the checkout button
 """
-from FrontEndAutomationChallenge.PageObjects.BasePage import BasePage
-from FrontEndAutomationChallenge.Resources.Locators import Locators
+from PageObjects.BasePage import BasePage
+from Resources.Locators import Locators
 
 
 class ShoppingCartPage(BasePage):
