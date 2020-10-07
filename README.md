@@ -21,7 +21,8 @@ The tests can either be run with Chrome or with Internet Explorer
 1. There will be an html file generated with the results of the tests inside the Reports folder
 
 ## Tests to run
-1. Login with a valid user
+1. Login with a valid user: This test will run 3 times with 3 valid users ("standard_user", "problem_user",
+"performance_glitch_user")
    - Expected​: Validate the user navigates to the product’s page.
 2. Login with an invalid user
    - Expected​: Validate error message is displayed.
