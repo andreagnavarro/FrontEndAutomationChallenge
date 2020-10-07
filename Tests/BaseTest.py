@@ -1,5 +1,5 @@
 """
-Class that includes the setup and tearDown functions that will execute before and after each test, respectively.
+Class that includes the tearDown function that will execute after each test.
 """
 import unittest
 from selenium import webdriver
@@ -7,8 +7,6 @@ from Resources.TestData import TestData
 
 
 class BaseTest(unittest.TestCase):
-
-
 
     def tearDown(self):
         """
