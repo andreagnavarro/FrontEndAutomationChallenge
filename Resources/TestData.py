@@ -1,11 +1,12 @@
 """
 Class that includes test data constants
 """
-
+import os
 
 class TestData:
-    CHROME_EXECUTABLE_PATH = 'C:\\Users\\agnavarr\\OneDrive - Intel Corporation\\Documents\\NSG\\Repos\\practice\\' \
-                             'FrontEndAutomationChallenge\\Drivers\\chromedriver.exe '
+    CHROME_EXECUTABLE_PATH = os.path.join(os.path.abspath("."), "Drivers", "chromedriver.exe")
+    IE_EXECUTABLE_PATH = os.path.join(os.path.abspath("."), "Drivers", "IEDriverServer.exe")
+    REPORTS = os.path.join(os.path.abspath("."), "Reports")
     STANDARD_USERNAME = "standard_user"
     VALID_PASSWORD = "secret_sauce"
     PRODUCTS_PAGE_KEY_WORD = "inventory"
