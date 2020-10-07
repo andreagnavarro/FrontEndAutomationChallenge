@@ -40,5 +40,5 @@ The tests can either be run with Chrome or with Internet Explorer
 9. Final order items
    - Expected: ​Validate items in the overview page match with the added items.
 10. Complete a purchase
-   - Expected: validate the user navigates to the confirmation page.
+    - Expected: validate the user navigates to the confirmation page.
 

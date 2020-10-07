@@ -3,6 +3,7 @@ Class that includes test data constants
 """
 import os
 
+
 class TestData:
     CHROME_EXECUTABLE_PATH = os.path.join(os.path.abspath("."), "Drivers", "chromedriver.exe")
     IE_EXECUTABLE_PATH = os.path.join(os.path.abspath("."), "Drivers", "IEDriverServer.exe")
@@ -22,4 +23,5 @@ class TestData:
     CHECKOUT_PAGE_STEP_TWO_PARTIAL_URL = "checkout-step-two"
     OVERVIEW_PAGE_URL = "https://www.saucedemo.com/checkout-step-two.html"
     CONFIRMATION_PAGE_PARTIAL_URL = "checkout-complete"
+
 

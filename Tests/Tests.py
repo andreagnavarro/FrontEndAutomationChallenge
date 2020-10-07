@@ -1,15 +1,11 @@
-import argparse
+"""
+Class that contains all of the test cases to be run.
+It also contains code needed to run at the beginning of the tests in order to add the repo's location to path
+"""
+import sys
 import inspect
 import os
-import sys
-import unittest
-import HtmlTestRunner
-from selenium import webdriver
 
-
-"""
-Code needed to run at the beginning of the tests in order to add the repo's location to path 
-"""
 # fetch path to the directory in which current file is, from root directory or C:\ (or whatever driver number it is)
 currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 # extract the path to parent directory
@@ -17,6 +13,10 @@ parentdir = os.path.dirname(currentdir)
 # insert path to the folder from parent directory from which the python module/ file is to be imported
 sys.path.insert(0, parentdir)
 
+import argparse
+import unittest
+import HtmlTestRunner
+from selenium import webdriver
 from PageObjects.OverviewPage import OverviewPage
 from PageObjects.ShoppingCartPage import ShoppingCartPage
 from PageObjects.CheckoutPage import CheckoutPage
@@ -25,8 +25,10 @@ from PageObjects.LoginPage import LoginPage
 from PageObjects.ProductsPage import ProductsPage
 from Resources.TestData import TestData
 from Resources.Locators import Locators
+from ddt import ddt, data
 
 
+@ddt
 class Tests(BaseTest):
 
     def setUp(self):
@@ -40,14 +42,15 @@ class Tests(BaseTest):
         elif self.browser == 'internet_explorer':
             self.driver = webdriver.Ie(TestData.IE_EXECUTABLE_PATH)
 
-    def test_login_with_a_valid_user(self):
+    @data("standard_user", "problem_user", "performance_glitch_user")
+    def test_login_with_a_valid_user(self, user):
         """
         Test that performs the login sequence with a valid username.
         Validates that the product page gets loaded.
         """
         self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
         self.login_page.get_login_page()
-        self.login_page.login_sequence(username=TestData.STANDARD_USERNAME, password=TestData.VALID_PASSWORD)
+        self.login_page.login_sequence(username=user, password=TestData.VALID_PASSWORD)
         self.assertIn(TestData.PRODUCTS_PAGE_KEY_WORD, self.driver.current_url)
 
     def test_login_with_an_invalid_user(self):
@@ -153,17 +156,6 @@ class Tests(BaseTest):
         self.overview_page.get_overview_page()
         self.overview_page.click_on_finish_button()
         self.assertIn(TestData.CONFIRMATION_PAGE_PARTIAL_URL, self.driver.current_url)
-
-
-# def parse_arguments():
-#     """
-#     Function needed to parse the name of the desired browser
-#     :return: name of the desired browser
-#     """
-#     parser = argparse.ArgumentParser()
-#     parser.add_argument('--browser', type=str, default=None, dest='browser',
-#                         help='Select the desired brower to run your test on')
-#     return parser
 
 
 if __name__ == "__main__":
