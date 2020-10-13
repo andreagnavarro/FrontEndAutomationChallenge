@@ -1,0 +1,3 @@
+selenium==3.141
+ddt==1.4.1
+html_testRunner==1.2.1

@@ -3,18 +3,24 @@ This repository contains a Proof of Concept (POC) of a test automation framework
 The tests can either be run with Chrome or with Internet Explorer
 
 ## Prerequisites
-1. Python3 must be installed on your system and added to the PATH
-2. Selenium package must be downloaded and part of your python packages
+1. Python3 and pip must be installed on your system and added to the PATH
+2. For chrome tests:
+   - Works with chrome version 86
 3. For Internet Explorer tests:
+   - Works with version 11.1457
    - Protected mode must be disabled on every security setting
    - Zoom setting must be at 100%
 
 ## Steps
 1. Clone the repository with the following command:
 `git clone https://github.com/andreagnavarro/FrontEndAutomationChallenge.git`
-2. To run with chrome use the following command:
+2.  Run the following command: `pip install -r requirements.txt` that installs the following python 3 packages:
+   - Selenium
+   - DDT
+   - HtmlTestRunner
+3. To run with chrome use the following command:
 `python3 Tests/Tests.py --browser chrome`
-3. To run with Internet Explorer use the following command:
+4. To run with Internet Explorer use the following command:
 `python3 Tests/Tests.py --browser internet_explorer`
 
 ## Results
