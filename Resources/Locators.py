@@ -14,11 +14,7 @@ class Locators:
     SIDEBAR_BUTTON = (By.CLASS_NAME, "bm-burger-button")
     LOGOUT_BUTTON = (By.ID, "logout_sidebar_link")
     SHOPPING_CART = (By.ID, "shopping_cart_container")
-    ADD_TO_CART_BUTTON_1 = (By.XPATH, "/html/body/div/div[2]/div[2]/div/div[2]/div/div[1]/div[3]/button")
-    ADD_TO_CART_BUTTON_2 = (By.XPATH, "/html/body/div/div[2]/div[2]/div/div[2]/div/div[2]/div[3]/button")
     # Shopping cart Page locators
-    SAUCE_LABS_BACKPACK = (By.XPATH, "//div[text()='Sauce Labs Backpack']")
-    SAUCE_LABS_BIKE_LIGHT = (By.XPATH, "//div[text()='Sauce Labs Bike Light']")
     CHECKOUT_BUTTON = (By.XPATH, "//a[text()='CHECKOUT']")
     # Checkout Page locators
     CONTINUE_BUTTON = (By.XPATH, "//*[@id='checkout_info_container']/div/form/div[2]/input")
@@ -29,3 +25,23 @@ class Locators:
     # Overview Page locators
     FINISH_BUTTON = (By.XPATH, "//a[text()='FINISH']")
 
+    @staticmethod
+    def get_item_locator_products_page(position):
+        """
+        Function that determines the locator of an "add to cart" button of an item based on its position.
+        Example, if the parameter position = "1" the first item displayed will be the one returned.
+        :param position: the position of the item to obtain the locator
+        :return: the locator of the "add to cart" button of the requested item
+        """
+        return By.XPATH, "/html/body/div/div[2]/div[2]/div/div[2]/div/div[{}]/div[3]/button".format(position)
+
+    @staticmethod
+    def get_item_locator_checkout_page(position):
+        """
+        Function that determines the locator of item in the cart. The xpath is shifted by 2, so in order to get the
+        correct locator, first the shift has to be implemented.
+        :param position: the position of the item to obtain the locator
+        :return: the locator of the requested item in the cart
+        """
+        position += 2
+        return By.XPATH, "/html/body/div/div[2]/div[3]/div/div[1]/div[{}]".format(str(position))

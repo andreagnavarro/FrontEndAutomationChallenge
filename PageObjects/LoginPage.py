@@ -27,19 +27,26 @@ class LoginPage(BasePage):
     def login_sequence(self, username, password):
         """
         Performs the login sequence which includes the following steps:
-        1. Get the username box
-        2. Clear the username box
-        3. Enter the given username
-        4. Get the password box
-        5. Clear the password box
-        6. Enter the given password
-        7. Click on the login button
-        :return:
+        1. Clear the username box
+        2. Enter the given username
+        3. Clear the password box
+        4. Enter the given password
+        5. Click on the login button
         """
         username_box = self.base_page.find_element(Locators.USERNAME_BOX)
+        password_box = self.base_page.find_element(Locators.PASSWORD_BOX)
         username_box.clear()
         self.base_page.write_to_element(element_locator=Locators.USERNAME_BOX, text=username)
-        password_box = self.base_page.find_element(Locators.PASSWORD_BOX)
         password_box.clear()
         self.base_page.write_to_element(element_locator=Locators.PASSWORD_BOX, text=password)
         self.base_page.click_on_element(Locators.LOGIN_BUTTON)
+
+    def is_error_button_visible(self):
+        """
+        Functions that verifies that the error button is visible on the screen
+        :return: True if error button is visible, false otherwise
+        """
+        if self.base_page.find_element(element_locator=Locators.ERROR_BUTTON):
+            return True
+        else:
+            return False

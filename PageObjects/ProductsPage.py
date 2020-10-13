@@ -37,16 +37,40 @@ class ProductsPage(BasePage):
         """
         self.base_page.click_on_element(element_locator=Locators.SHOPPING_CART)
 
-    def click_add_first_item_to_cart_button(self):
+    def click_add_item_to_cart_button(self, positions):
         """
         Clicks on the first item's add to cart button on the products page
         This first item is the Sauce Labs Backpack
+        :param positions: list of the position of the item to be added to cart
         """
-        self.base_page.click_on_element(element_locator=Locators.ADD_TO_CART_BUTTON_1)
+        for position in positions:
+            item = Locators.get_item_locator_products_page(position=position)
+            self.base_page.click_on_element(element_locator=item)
 
-    def click_add_second_item_to_cart_button(self):
+    def is_login_button_visible(self):
         """
-        Clicks on the second item's add to cart button on the products page
-        This second item is the Sauce Labs Bike Light
+        Function that asserts the visibility of the login button
+        :return: True if the login button is found on the page, false otherwise
         """
-        self.base_page.click_on_element(element_locator=Locators.ADD_TO_CART_BUTTON_2)
+
+        if self.base_page.find_element(element_locator=Locators.LOGIN_BUTTON):
+            return True
+        else:
+            return False
+
+    def is_item_visible(self, positions):
+        """
+        Function that verifies that every single item added to the cart is visible in the cart.
+        This is done by receiving a list of positions and verifying that the amount of positions is the same amount of
+        items
+        :param positions: list of the positions of the items to verify
+        :return: True if the amount of positions and the amount of items in the cart match
+        """
+        i = 1
+        for position in positions:
+            item = Locators.get_item_locator_checkout_page(position=i)
+            if not self.base_page.find_element(element_locator=item):
+                return False
+            i += 1
+        return True
+

@@ -2,8 +2,6 @@
 Class that includes the tearDown function that will execute after each test.
 """
 import unittest
-from selenium import webdriver
-from Resources.TestData import TestData
 
 
 class BaseTest(unittest.TestCase):

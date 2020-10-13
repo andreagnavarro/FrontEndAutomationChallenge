@@ -17,30 +17,46 @@ import argparse
 import unittest
 import HtmlTestRunner
 from selenium import webdriver
+from Tests.BaseTest import BaseTest
 from PageObjects.OverviewPage import OverviewPage
 from PageObjects.ShoppingCartPage import ShoppingCartPage
 from PageObjects.CheckoutPage import CheckoutPage
-from Tests.BaseTest import BaseTest
 from PageObjects.LoginPage import LoginPage
 from PageObjects.ProductsPage import ProductsPage
 from Resources.TestData import TestData
-from Resources.Locators import Locators
 from ddt import ddt, data
 
 
+def determine_driver():
+    """
+    Function that determines the driver to use based on the browser chosen by the user
+    :return: driver's executable path
+    """
+    browser = args.browser
+    if browser == 'chrome':
+        driver = webdriver.Chrome(TestData.CHROME_EXECUTABLE_PATH)
+    elif browser == 'internet_explorer':
+        driver = webdriver.Ie(TestData.IE_EXECUTABLE_PATH)
+    return driver
+
+
 @ddt
-class Tests(BaseTest):
+class LoginTests(BaseTest):
+    """
+    Class that runs Login sequence tests:
+    1. Login with a valid user
+    2. Login with an invalid user
+    3. Logout from products page
+    """
 
     def setUp(self):
         """
-        Setting up website driver
-        :param driver: depends on the desired browser
+        Function that initializes driver attribute and gets the login page at the beginning of every test
+        :return:
         """
-        self.browser = args.browser
-        if self.browser == 'chrome':
-            self.driver = webdriver.Chrome(TestData.CHROME_EXECUTABLE_PATH)
-        elif self.browser == 'internet_explorer':
-            self.driver = webdriver.Ie(TestData.IE_EXECUTABLE_PATH)
+        self.driver = determine_driver()
+        self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
+        self.login_page.get_login_page()
 
     @data("standard_user", "problem_user", "performance_glitch_user")
     def test_login_with_a_valid_user(self, user):
@@ -48,8 +64,6 @@ class Tests(BaseTest):
         Test that performs the login sequence with a valid username.
         Validates that the product page gets loaded.
         """
-        self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
-        self.login_page.get_login_page()
         self.login_page.login_sequence(username=user, password=TestData.VALID_PASSWORD)
         self.assertIn(TestData.PRODUCTS_PAGE_KEY_WORD, self.driver.current_url)
 
@@ -58,28 +72,45 @@ class Tests(BaseTest):
         Test that performs the login sequence with a locked out username.
         Validates that the error message appears on screen.
         """
-        self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
-        self.login_page.get_login_page()
         self.login_page.login_sequence(username=TestData.LOCKED_OUT_USER_NAME, password=TestData.VALID_PASSWORD)
-        self.assertTrue(self.login_page.find_element(element_locator=Locators.ERROR_BUTTON))
+        self.assertTrue(self.login_page.is_error_button_visible())
 
     def test_logout_from_products_page(self):
         """
         Test that perform the logout sequence from the product's page.
         Validates that the login page loads.
         """
+        self.login_page.login_sequence(username=TestData.STANDARD_USERNAME, password=TestData.VALID_PASSWORD)
         self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
-        self.products_page.get_products_page()
         self.products_page.logout_sequence()
-        self.assertTrue(self.products_page.find_element(element_locator=Locators.LOGIN_BUTTON))
+        self.assertTrue(self.products_page.is_login_button_visible())
+
+
+@ddt
+class ShoppingCartTests(BaseTest):
+    """
+    Class that runs Shopping cart related tests:
+    1. Navigate to the shopping cart
+    2. Add single item to cart
+    3. Add multiple items to cart
+    """
+
+    def setUp(self):
+        """
+        Function that initializes driver attribute, enters login sequence and initializes products page at the beginning
+        of every tests.
+        """
+        self.driver = determine_driver()
+        self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
+        self.login_page.get_login_page()
+        self.login_page.login_sequence(username=TestData.STANDARD_USERNAME, password=TestData.VALID_PASSWORD)
+        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
 
     def test_navigate_to_the_shopping_cart(self):
         """
         Test that navigates to the product page and click on the shopping cart
         Validates that the shopping cart page loads
         """
-        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
-        self.products_page.get_products_page()
         self.products_page.click_on_shopping_cart()
         self.assertIn(TestData.CART_PAGE_URL_PARTIAL, self.driver.current_url)
 
@@ -88,43 +119,63 @@ class Tests(BaseTest):
         Test that navigates to the products page, adds an item to the cart and make sure the item is in the cart
         Validates that the item selected was correctly added to the cart
         """
-        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
-        self.products_page.get_products_page()
-        self.products_page.click_add_first_item_to_cart_button()
+        self.products_page.click_add_item_to_cart_button(positions=TestData.FIST_POSITION)
         self.products_page.click_on_shopping_cart()
-        self.assertTrue(self.products_page.find_element(element_locator=Locators.SAUCE_LABS_BACKPACK))
+        self.assertTrue(self.products_page.is_item_visible(positions=TestData.FIST_POSITION))
 
-    def test_add_multiple_items_to_cart(self):
+    @data(["1", "2"], ["2", "3"])
+    def test_add_multiple_items_to_cart(self, positions):
         """
-        Test that navigates to the products page, adds the first two items to the cart
+        Test that navigates to the products page, adds the items to the cart passed by the parameter positions
         Validates that both items selected were correctly added to the cart
+        :param positions: list of the position of the items to add to cart
         """
-        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
-        self.products_page.get_products_page()
-        self.products_page.click_add_first_item_to_cart_button()
-        self.products_page.click_add_second_item_to_cart_button()
+        self.products_page.click_add_item_to_cart_button(positions=positions)
         self.products_page.click_on_shopping_cart()
-        self.assertTrue(self.products_page.find_element(element_locator=Locators.SAUCE_LABS_BACKPACK) and
-                        self.products_page.find_element(element_locator=Locators.SAUCE_LABS_BIKE_LIGHT))
+        self.assertTrue(self.products_page.is_item_visible(positions=positions))
+
+
+class CompletingPurchaseTests(BaseTest):
+    """
+    Class that runs Completing a purchase related tests:
+    1. Continue with missing mail information
+    2. Fill user's information
+    3. Final order items
+    4. Complete a purchase
+    """
+
+    def setUp(self):
+        """
+        Function that initializes driver attribute, enters login sequence, initializes products page, add an item to
+        the shopping cart and initializes the checkout page at the beginning of every test.
+        """
+        self.driver = determine_driver()
+        self.login_page = LoginPage(driver=self.driver, url=TestData.LOGIN_PAGE_URL)
+        self.login_page.get_login_page()
+        self.login_page.login_sequence(username=TestData.STANDARD_USERNAME, password=TestData.VALID_PASSWORD)
+        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
+        self.products_page.click_add_item_to_cart_button(positions=TestData.FIST_POSITION)
+        self.products_page.click_on_shopping_cart()
+        self.shopping_cart_page = ShoppingCartPage(driver=self.driver, url=TestData.CART_PAGE_URL)
+        self.shopping_cart_page.click_on_checkout_button()
+        self.checkout_page = CheckoutPage(driver=self.driver, url=TestData.CHECKOUT_PAGE_URL)
 
     def test_continue_with_missing_mail_information(self):
         """
         Test that navigates to the checkout page and clicks continue without any of the users information
         Validates that the missing information error is displayed
         """
-        self.checkout_page = CheckoutPage(driver=self.driver, url=TestData.CHECKOUT_PAGE_URL)
-        self.checkout_page.get_checkout_page()
         self.checkout_page.click_continue_button()
-        self.assertTrue(self.checkout_page.find_element(element_locator=Locators.MISSING_INFORMATION_ERROR))
+        self.assertTrue(self.checkout_page.is_missing_info_error_visible())
 
     def test_fill_users_information(self):
         """
         Test that navigates to the checkout page and fills out the users information and clicks on the continue button
         Validates that the overview page loads correctly
         """
-        self.checkout_page = CheckoutPage(driver=self.driver, url=TestData.CHECKOUT_PAGE_URL)
-        self.checkout_page.get_checkout_page()
-        self.checkout_page.fill_out_users_information()
+        self.checkout_page.fill_out_users_first_name(first_name=TestData.FIRST_NAME)
+        self.checkout_page.fill_out_users_last_name(last_name=TestData.LAST_NAME)
+        self.checkout_page.fill_out_users_postal_code_name(postal_code=TestData.POSTAL_CODE)
         self.checkout_page.click_continue_button()
         self.assertIn(TestData.CHECKOUT_PAGE_STEP_TWO_PARTIAL_URL, self.driver.current_url)
 
@@ -134,26 +185,22 @@ class Tests(BaseTest):
         users information and verifies the product was the correct one
         Validates that the item in the overview page matches with the added item
         """
-        self.products_page = ProductsPage(driver=self.driver, url=TestData.PRODUCTS_PAGE_URL)
-        self.products_page.get_products_page()
-        self.products_page.click_add_first_item_to_cart_button()
-        self.products_page.click_add_second_item_to_cart_button()
-        self.products_page.click_on_shopping_cart()
-        self.shopping_cart_page = ShoppingCartPage(driver=self.driver, url=TestData.CART_PAGE_URL)
-        self.shopping_cart_page.click_on_checkout_button()
-        self.checkout_page = CheckoutPage(driver=self.driver, url=TestData.CHECKOUT_PAGE_URL)
-        self.checkout_page.fill_out_users_information()
+        self.checkout_page.fill_out_users_first_name(first_name=TestData.FIRST_NAME)
+        self.checkout_page.fill_out_users_last_name(last_name=TestData.LAST_NAME)
+        self.checkout_page.fill_out_users_postal_code_name(postal_code=TestData.POSTAL_CODE)
         self.checkout_page.click_continue_button()
-        self.assertTrue(self.products_page.find_element(element_locator=Locators.SAUCE_LABS_BACKPACK) and
-                        self.products_page.find_element(element_locator=Locators.SAUCE_LABS_BIKE_LIGHT))
+        self.assertTrue(self.products_page.is_item_visible(positions=TestData.FIST_POSITION))
 
     def test_complete_a_purchase(self):
         """
         Test that navigates to the overview page and clicks the finish button
         Validates that the confirmation page is loaded correctly
         """
+        self.checkout_page.fill_out_users_first_name(first_name=TestData.FIRST_NAME)
+        self.checkout_page.fill_out_users_last_name(last_name=TestData.LAST_NAME)
+        self.checkout_page.fill_out_users_postal_code_name(postal_code=TestData.POSTAL_CODE)
+        self.checkout_page.click_continue_button()
         self.overview_page = OverviewPage(driver=self.driver, url=TestData.OVERVIEW_PAGE_URL)
-        self.overview_page.get_overview_page()
         self.overview_page.click_on_finish_button()
         self.assertIn(TestData.CONFIRMATION_PAGE_PARTIAL_URL, self.driver.current_url)
 
@@ -165,3 +212,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
     sys.argv[1:] = args.unittest_args
     unittest.main(testRunner=HtmlTestRunner.HTMLTestRunner(output=TestData.REPORTS))
+
